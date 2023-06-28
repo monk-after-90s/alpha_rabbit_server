@@ -6,6 +6,8 @@ Base = declarative_base()
 
 
 class CommonColumn(Base):
+    __abstract__ = True
+
     id = mapped_column(INTEGER, primary_key=True)
     is_delete = mapped_column(TINYINT(1), nullable=False, server_default=text("'0'"),
                               comment='删除标识 0:未删除 1:已删除')
