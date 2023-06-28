@@ -8,4 +8,19 @@ router = APIRouter()
 async def smart_pred(*,
                      symbol_type: MarketType = Path(..., alias="symbolType"),
                      request: Request):
-    return await request.json()
+    return {
+        "symbol": "string",
+        "symbolType": "spot",
+        "kInterval": "1d",
+        "kNum": 0,
+        "accuracy": 0,
+        "data": [
+            {
+                "datetime": "2019-08-24T14:15:22Z",
+                "open": 0,
+                "high": 0,
+                "low": 0,
+                "close": 0
+            }
+        ]
+    }
