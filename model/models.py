@@ -5,38 +5,35 @@ from sqlalchemy.orm import declarative_base, mapped_column
 Base = declarative_base()
 
 
-class KPattern(Base):
+class CommonColumn(Base):
+    is_delete = mapped_column(TINYINT(1), nullable=False, server_default=text("'0'"),
+                              comment='删除标识 0:未删除 1:已删除')
+    create_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='创建用户ID')
+    create_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='创建时间戳')
+    update_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='更新用户ID')
+    update_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='更新时间戳')
+
+
+class KPattern(CommonColumn):
     __tablename__ = 'k_pattern'
     __table_args__ = {'comment': 'K线形态'}
 
     id = mapped_column(INTEGER, primary_key=True)
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='名')
-    is_delete = mapped_column(TINYINT(1), nullable=False, server_default=text("'0'"),
-                              comment='删除标识 0:未删除 1:已删除')
-    create_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='创建用户ID')
-    create_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='创建时间戳')
-    update_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='更新用户ID')
-    update_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='更新时间戳')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
     imageUrl = mapped_column(String(255, 'utf8mb4_bin'), comment='图片URL')
 
 
-class KPatternGroup(Base):
+class KPatternGroup(CommonColumn):
     __tablename__ = 'k_pattern_group'
     __table_args__ = {'comment': 'K线形态组'}
 
     id = mapped_column(INTEGER, primary_key=True)
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='形态组名')
-    is_delete = mapped_column(TINYINT(1), nullable=False, server_default=text("'0'"),
-                              comment='删除标识 0:未删除 1:已删除')
-    create_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='创建用户ID')
-    create_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='创建时间戳')
-    update_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='更新用户ID')
-    update_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='更新时间戳')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
 
 
-class PatternRecognizeRecord(Base):
+class PatternRecognizeRecord(CommonColumn):
     __tablename__ = 'pattern_recognize_record'
     __table_args__ = (
         Index('unique_recognization_idx', 'patternId', 'symbol_type', 'symbol', 'kInterval', 'patternStart',
@@ -55,10 +52,4 @@ class PatternRecognizeRecord(Base):
     patternEnd = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'),
                                comment='形态匹配的终止K线开盘时间戳')
     matchScore = mapped_column(Float, nullable=False, comment='匹配度 ')
-    is_delete = mapped_column(TINYINT(1), nullable=False, server_default=text("'0'"),
-                              comment='删除标识 0:未删除 1:已删除')
-    create_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='创建用户ID')
-    create_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='创建时间戳')
-    update_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='更新用户ID')
-    update_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='更新时间戳')
     extra = mapped_column(JSON, comment='匹配形态结果的其他返回值')
