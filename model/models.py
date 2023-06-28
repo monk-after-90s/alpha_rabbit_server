@@ -1,4 +1,4 @@
-from sqlalchemy import Float, Index, JSON, String, TIMESTAMP, text
+from sqlalchemy import Column, Float, Index, JSON, String, TIMESTAMP, text
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT, VARCHAR
 from sqlalchemy.orm import declarative_base, mapped_column
 
@@ -6,6 +6,7 @@ Base = declarative_base()
 
 
 class CommonColumn(Base):
+    id = mapped_column(INTEGER, primary_key=True)
     is_delete = mapped_column(TINYINT(1), nullable=False, server_default=text("'0'"),
                               comment='删除标识 0:未删除 1:已删除')
     create_id = mapped_column(INTEGER, nullable=False, server_default=text("'0'"), comment='创建用户ID')
@@ -18,7 +19,6 @@ class KPattern(CommonColumn):
     __tablename__ = 'k_pattern'
     __table_args__ = {'comment': 'K线形态'}
 
-    id = mapped_column(INTEGER, primary_key=True)
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='名')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
     imageUrl = mapped_column(String(255, 'utf8mb4_bin'), comment='图片URL')
@@ -28,7 +28,6 @@ class KPatternGroup(CommonColumn):
     __tablename__ = 'k_pattern_group'
     __table_args__ = {'comment': 'K线形态组'}
 
-    id = mapped_column(INTEGER, primary_key=True)
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='形态组名')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
 
@@ -41,7 +40,6 @@ class PatternRecognizeRecord(CommonColumn):
         {'comment': '形态识别记录'}
     )
 
-    id = mapped_column(INTEGER, primary_key=True)
     exchange = mapped_column(String(32, 'utf8mb4_bin'), nullable=False, comment='交易所：如 币安,BINANCE')
     symbol_type = mapped_column(String(16, 'utf8mb4_bin'), nullable=False, comment='市场类型:spot、futures')
     symbol = mapped_column(VARCHAR(128), nullable=False, comment='市场符号，如BTC/USDT')
