@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, Index, Integer, JSON, String, TIMESTAMP, Table, text
+from sqlalchemy import Column, Float, Index, JSON, String, TIMESTAMP, Table, text, ForeignKey
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT, VARCHAR
 from sqlalchemy.orm import declarative_base, mapped_column, relationship
 
@@ -17,6 +17,14 @@ class CommonColumn(Base):
     update_ts = mapped_column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), comment='更新时间戳')
 
 
+t_k_pattern_and_group = Table(
+    'k_pattern_and_group_mapping', CommonColumn.metadata,
+    Column('k_pattern_id', INTEGER, ForeignKey('k_pattern.id'), nullable=False, comment='K线形态id'),
+    Column('k_pattern_group_id', INTEGER, ForeignKey('k_pattern_group.id'), nullable=False, comment='K线形态组id'),
+    comment='K线形态和形态组映射关系'
+)
+
+
 class KPattern(CommonColumn):
     __tablename__ = 'k_pattern'
     __table_args__ = {'comment': 'K线形态'}
@@ -24,7 +32,7 @@ class KPattern(CommonColumn):
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='名')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
     imageUrl = mapped_column(String(255, 'utf8mb4_bin'), comment='图片URL')
-    groups = relationship("KPatternGroup", secondary="k_pattern_and_group", backref="k_patterns")
+    # groups = relationship("KPatternGroup", secondary=t_k_pattern_and_group, backref="k_patterns")
 
 
 class KPatternGroup(CommonColumn):
@@ -33,7 +41,7 @@ class KPatternGroup(CommonColumn):
 
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='形态组名')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
-    k_patterns = relationship("KPattern", secondary="k_pattern_and_group", backref="groups")
+    k_patterns = relationship("KPattern", secondary=t_k_pattern_and_group, backref="groups")
 
 
 class PatternRecognizeRecord(CommonColumn):
@@ -55,12 +63,3 @@ class PatternRecognizeRecord(CommonColumn):
                                comment='形态匹配的终止K线开盘时间戳')
     matchScore = mapped_column(Float, nullable=False, comment='匹配度 ')
     extra = mapped_column(JSON, comment='匹配形态结果的其他返回值')
-
-
-t_k_pattern_and_group = Table(
-    'k_pattern_and_group', CommonColumn.metadata,
-    Column('id', Integer),
-    Column('k_pattern_id', INTEGER, nullable=False, comment='K线形态id'),
-    Column('k_pattern_group_id', INTEGER, nullable=False, comment='K线形态组id'),
-    comment='K线形态和形态组映射关系'
-)
