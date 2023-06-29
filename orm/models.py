@@ -1,6 +1,8 @@
+from typing import List
+
 from sqlalchemy import Column, Float, Index, JSON, String, TIMESTAMP, Table, text, ForeignKey
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT, VARCHAR
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
@@ -33,6 +35,7 @@ class KPattern(CommonColumn):
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
     imageUrl = mapped_column(String(255, 'utf8mb4_bin'), comment='图片URL')
     # groups = relationship("KPatternGroup", secondary=t_k_pattern_and_group, backref="k_patterns")
+    groups: Mapped[List["KPatternGroup"]] = relationship(secondary=t_k_pattern_and_group)
 
 
 class KPatternGroup(CommonColumn):
@@ -41,7 +44,8 @@ class KPatternGroup(CommonColumn):
 
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='形态组名')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
-    k_patterns = relationship("KPattern", secondary=t_k_pattern_and_group, backref="groups")
+    # k_patterns = relationship("KPattern", secondary=t_k_pattern_and_group, backref="groups")
+    k_patterns: Mapped[List["KPattern"]] = relationship(secondary=t_k_pattern_and_group)
 
 
 class PatternRecognizeRecord(CommonColumn):
