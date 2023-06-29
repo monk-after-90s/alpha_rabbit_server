@@ -9,9 +9,7 @@ router = APIRouter()
 
 
 @router.post("/{symbolType}/getAllPatternGroups")
-async def get_all_pattern_groups(*,
-                                 symbol_type: MarketType = Path(..., alias="symbolType"),
-                                 request: Request):
+async def get_all_pattern_groups():
     """获取全部形态组"""
     async with async_session() as session:
         # 执行查询并获取全部数据
