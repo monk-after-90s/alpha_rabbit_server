@@ -1,11 +1,11 @@
 from sqlalchemy import Column, Float, Index, JSON, String, TIMESTAMP, Table, text, ForeignKey
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT, VARCHAR
-from sqlalchemy.orm import declarative_base, mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncAttrs
 
-Base = declarative_base()
 
-
-class CommonColumn(Base):
+class CommonColumn(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
 
     id = mapped_column(INTEGER, primary_key=True)
