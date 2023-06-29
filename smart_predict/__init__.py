@@ -1,1 +1,1 @@
-from .smart_predict import router
+from .routes import router
