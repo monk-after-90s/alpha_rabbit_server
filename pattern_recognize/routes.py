@@ -73,7 +73,7 @@ async def recognize_pattern(*,
         if 'patternIds' in recognize_param:
             pattern_ids = recognize_param['patternIds']
 
-            stmt = stmt.where(PatternRecognizeRecord.id.in_(pattern_ids))
+            stmt = stmt.where(PatternRecognizeRecord.patternId.in_(pattern_ids))
 
         # 计算需要跳过的项的数量
         skip = (page - 1) * per_page
