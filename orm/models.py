@@ -1,6 +1,6 @@
 from typing import List
 from utilities import TimestampWithTimezone
-from sqlalchemy import Column, Float, Index, JSON, String, Table, text, ForeignKey
+from sqlalchemy import Column, Float, Index, JSON, String, Table, text, ForeignKey, Integer, DateTime
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT, VARCHAR
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import DeclarativeBase
@@ -69,3 +69,24 @@ class PatternRecognizeRecord(CommonColumn):
                                comment='形态匹配的终止K线开盘时间戳')
     matchScore = mapped_column(Float, nullable=False, comment='匹配度 ')
     extra = mapped_column(JSON, comment='匹配形态结果的其他返回值')
+
+
+class Dbbardata(AsyncAttrs, DeclarativeBase):
+    __tablename__ = 'dbbardata'
+    __table_args__ = (
+        Index('dbbardata_symbol_exchange_interval_datetime', 'symbol', 'exchange', 'interval', 'datetime', unique=True),
+    )
+
+    id = mapped_column(Integer, primary_key=True)
+    symbol = mapped_column(String(255, 'utf8mb4_bin'), nullable=False)
+    exchange = mapped_column(String(255, 'utf8mb4_bin'), nullable=False)
+    datetime = mapped_column(DateTime, nullable=False)
+    interval = mapped_column(String(255, 'utf8mb4_bin'), nullable=False)
+    volume = mapped_column(Float, nullable=False)
+    turnover = mapped_column(Float, nullable=False)
+    open_interest = mapped_column(Float, nullable=False)
+    open_price = mapped_column(Float, nullable=False)
+    high_price = mapped_column(Float, nullable=False)
+    low_price = mapped_column(Float, nullable=False)
+    close_price = mapped_column(Float, nullable=False)
+    is_checked = mapped_column(TINYINT(1), server_default=text("'0'"), comment='是否已经检查过')
