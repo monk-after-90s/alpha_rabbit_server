@@ -7,7 +7,6 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
-# todo 全部实现is_delete逻辑删除
 class CommonColumn(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
 
