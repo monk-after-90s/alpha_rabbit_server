@@ -7,7 +7,6 @@ from sqlalchemy import select
 from orm import async_session
 from sqlalchemy.orm import selectinload
 from dateutil.parser import parse
-from utilities import convert_to_sh
 
 router = APIRouter()
 
@@ -66,9 +65,9 @@ async def recognize_pattern(*,
         if 'kInterval' in recognize_param:
             stmt = stmt.where(PatternRecognizeRecord.kInterval == str(recognize_param['kInterval']))
         if 'start' in recognize_param:
-            stmt = stmt.where(PatternRecognizeRecord.patternEnd >= convert_to_sh(parse(recognize_param['start'])))
+            stmt = stmt.where(PatternRecognizeRecord.patternEnd >= parse(recognize_param['start']))
         if 'end' in recognize_param:
-            stmt = stmt.where(PatternRecognizeRecord.patternEnd <= convert_to_sh(parse(recognize_param['end'])))
+            stmt = stmt.where(PatternRecognizeRecord.patternEnd <= parse(recognize_param['end']))
         ## patternIds
         if 'patternIds' in recognize_param:
             pattern_ids = recognize_param['patternIds']
