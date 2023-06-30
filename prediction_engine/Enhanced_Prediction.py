@@ -6,18 +6,19 @@ result=method.prediction_method()
 from sqlalchemy import create_engine, text
 import pandas as pd
 
+
 class Enhanced_Prediction:
-    def __init__(self,symbol_type,symbol,interval,datetime):
+    def __init__(self, symbol_type, symbol, interval, datetime):
         self.user = "szhb"
         self.password = "Vlink168168"
         self.host1 = "rm-wz93wz2ew5j3di360-l3.mysql.rds.aliyuncs.com"
         self.host2 = "rm-wz93wz2ew5j3di360-l3.mysql.rds.aliyuncs.com"
         self.database1 = "quant"
         self.database2 = "alpha_rabit_dev"
-        self.symbol_type=symbol_type
-        self.symbol=symbol
-        self.interval=interval
-        self.datetime=datetime
+        self.symbol_type = symbol_type
+        self.symbol = symbol
+        self.interval = interval
+        self.datetime = datetime
 
     def get_data1(self):
         if self.symbol_type == 'spot':
@@ -25,27 +26,28 @@ class Enhanced_Prediction:
         elif self.symbol_type == 'futures':
             symbol = self.symbol.replace("/", "").upper()
 
-        interval=self.interval
+        interval = self.interval
 
         engine = create_engine(f'mysql+pymysql://{self.user}:{self.password}@{self.host1}/{self.database1}')
 
         query = text(f"SELECT * FROM dbbardata WHERE symbol=:symbol AND `interval`=:interval")
         with engine.begin() as connection:
             df = pd.read_sql_query(query, connection, params={'symbol': symbol, 'interval': interval})
-            df['datetime']=pd.to_datetime(df['datetime'])
+            df['datetime'] = pd.to_datetime(df['datetime'])
         return df
 
     def get_data2(self):
-        symbol_type=self.symbol_type
-        symbol=self.symbol
-        interval=self.interval
-
+        symbol_type = self.symbol_type
+        symbol = self.symbol
+        interval = self.interval
 
         engine = create_engine(f'mysql+pymysql://{self.user}:{self.password}@{self.host2}/{self.database2}')
 
-        query = text(f"SELECT * FROM pattern_recognize_record WHERE symbol_type=:symbol_type AND symbol=:symbol AND `interval`=:interval")
+        query = text(
+            f"SELECT * FROM pattern_recognize_record WHERE symbol_type=:symbol_type AND symbol=:symbol AND `interval`=:interval")
         with engine.begin() as connection:
-            df = pd.read_sql_query(query, connection, params={'symbol_type': symbol_type,'symbol': symbol,'interval': interval})
+            df = pd.read_sql_query(query, connection,
+                                   params={'symbol_type': symbol_type, 'symbol': symbol, 'interval': interval})
 
         return df
 
@@ -53,8 +55,8 @@ class Enhanced_Prediction:
         # 获取两个数据集
         data1 = self.get_data1()
         data2 = self.get_data2()
-        data2['patternStart']=pd.to_datetime(data2['patternStart'])
-        data2['patternEnd']=pd.to_datetime(data2['patternEnd'])
+        data2['patternStart'] = pd.to_datetime(data2['patternStart'])
+        data2['patternEnd'] = pd.to_datetime(data2['patternEnd'])
 
         # 在data1中找到self.datetime的位置，然后向前推3个索引
         target_index = data1[data1['datetime'] == self.datetime].index[0]
@@ -66,13 +68,13 @@ class Enhanced_Prediction:
 
         return filtered_data2
 
-    #找出历史上特定形态的叠加走势（归一化）
+    # 找出历史上特定形态的叠加走势（归一化）
     def fetch_pattern_data(self, patternId):
         # 获取两个数据集
         data1 = self.get_data1()
         data2 = self.get_data2()
         data2['patternStart'] = pd.to_datetime(data2['patternStart'])
-        data2['patternEnd']=pd.to_datetime(data2['patternEnd'])
+        data2['patternEnd'] = pd.to_datetime(data2['patternEnd'])
 
         # 在data2中找到patternId等于输入参数的所有行
         target_rows = data2[data2['patternId'] == patternId]
@@ -105,7 +107,7 @@ class Enhanced_Prediction:
 
         return average_trend
 
-    #直接返回该次预测值
+    # 直接返回该次预测值
     def prediction_method(self):
         # 获取第二个数据集
         filtered_data2 = self.get_data2()
@@ -145,8 +147,8 @@ class Enhanced_Prediction:
                 # 如果数量相等，删除patternStart值较小的一半行
                 filtered_data2 = filtered_data2.sort_values('patternStart')
                 filtered_data2 = filtered_data2[int(len(filtered_data2) / 2):]
-            #计算平均匹配度
-            corre=filtered_data2['matchScore'].mean()
+            # 计算平均匹配度
+            corre = filtered_data2['matchScore'].mean()
 
             # 获取patternId的唯一值
             unique_pattern_ids = filtered_data2['patternId'].unique()
@@ -165,4 +167,4 @@ class Enhanced_Prediction:
         # 对average_dataframe的值进行还原
         average_dataframe = average_dataframe * close_price
 
-        return average_dataframe,corre
+        return average_dataframe, corre

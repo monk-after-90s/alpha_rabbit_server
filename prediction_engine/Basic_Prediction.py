@@ -13,19 +13,19 @@ from scipy.spatial.distance import euclidean
 from heapq import nsmallest
 from operator import itemgetter
 
+
 class Basic_Prediction:
 
     def __init__(self, data, length=5):
 
         self.ma_period = 10
-        self.data=data.copy()
+        self.data = data.copy()
         # First, calculate moving average on self.data
         self.data['moving_average'] = self.data['close'].rolling(window=self.ma_period).mean()
         # Drop NaN values
         self.data = self.data.dropna()
         self.pattern = self.data.iloc[-length:].copy()
-        self.pattern=self.pattern[['close','turnover','moving_average']]
-
+        self.pattern = self.pattern[['close', 'turnover', 'moving_average']]
 
     def create_pattern_series(self):
         pattern_dict = {}
@@ -41,12 +41,9 @@ class Basic_Prediction:
                 pattern_dict[i + pattern_length - 1] = pattern
         return pd.Series(pattern_dict)
 
-
-
     def normalize_series(self, dataframe):
         scaler = MinMaxScaler()
         dataframe_normalized = scaler.fit_transform(dataframe)
-
 
         return dataframe_normalized
 
@@ -55,13 +52,9 @@ class Basic_Prediction:
 
         patterns_series = self.create_pattern_series()
 
-
         dtw_distances = {}
 
         for index, historical_pattern in patterns_series.iteritems():
-
-
-
             distance, _ = fastdtw(self.normalize_series(pattern), self.normalize_series(historical_pattern),
                                   dist=euclidean)
             dtw_distances[index] = distance
@@ -74,16 +67,16 @@ class Basic_Prediction:
         for index, similar_pattern in top_indices_and_patterns:
 
             # Compute correlations for each feature and average them
-            corr_close = np.corrcoef(pattern.iloc[:, 0].values.flatten(),similar_pattern[:, 0].flatten())[0, 1]
-            corr_volume = np.corrcoef(pattern.iloc[:, 1].values.flatten(),similar_pattern[:, 1].flatten())[0, 1]
-            corr_ma = np.corrcoef(pattern.iloc[:, 2].values.flatten(),similar_pattern[:, 2].flatten())[0, 1]
+            corr_close = np.corrcoef(pattern.iloc[:, 0].values.flatten(), similar_pattern[:, 0].flatten())[0, 1]
+            corr_volume = np.corrcoef(pattern.iloc[:, 1].values.flatten(), similar_pattern[:, 1].flatten())[0, 1]
+            corr_ma = np.corrcoef(pattern.iloc[:, 2].values.flatten(), similar_pattern[:, 2].flatten())[0, 1]
             avg_corr = np.mean([corr_close, corr_volume, corr_ma])
 
             if avg_corr >= corr_threshold:
                 top_indices_and_patterns_corr_checked.append(index)
                 corr_coef_list.append(avg_corr)
 
-        return (top_indices_and_patterns_corr_checked,np.mean(corr_coef_list))
+        return (top_indices_and_patterns_corr_checked, np.mean(corr_coef_list))
 
     def extract_next_bars(self):
 
@@ -100,14 +93,14 @@ class Basic_Prediction:
 
                     next_pattern_list.append(result)
 
-            if len(next_pattern_list)!=0:
+            if len(next_pattern_list) != 0:
                 total_array = np.mean([df.values for df in next_pattern_list], axis=0)
 
                 # 将结果转换回DataFrame
                 sum_df = pd.DataFrame(total_array, columns=next_pattern_list[0].columns)
                 sum_df = sum_df * self.pattern['close'].iloc[-1]
 
-                return sum_df,self.find_top_similar_patterns()[1]
+                return sum_df, self.find_top_similar_patterns()[1]
             else:
                 return None
 
