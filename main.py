@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
-from smart_predict import router as smart_predict_router
-from pattern_recognize import router as pattern_recognize_router
+from routers.smart_predict import router as smart_predict_router
+from routers.pattern_recognize import router as pattern_recognize_router
 from orm import engine
 
 app = FastAPI()
