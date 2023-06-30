@@ -18,7 +18,7 @@ class Enhanced_Prediction:
         self.host1 = os.getenv("DB_HOST")
         self.host2 = os.getenv("DB_HOST")
         self.database1 = os.getenv("DB1")
-        self.database2 = os.getenv("DB")
+        self.database2 = os.getenv("DB0")
         self.symbol_type = symbol_type
         self.symbol = symbol
         self.interval = interval

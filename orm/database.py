@@ -17,7 +17,7 @@ engine: AsyncEngine = create_async_engine(
                os.getenv("DB_PASSWD"),
                os.getenv("DB_HOST"),
                os.getenv("DB_PORT"),
-               os.getenv("DB"),
+               os.getenv("DB0"),
                query={"charset": "utf8mb4", "init_command": "SET time_zone = '+08:00';"}),
     echo=True)
 
