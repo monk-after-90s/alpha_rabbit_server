@@ -36,4 +36,4 @@ class LogicDelAsyncSession(AsyncSession):
         return await super().execute(statement, *args, **kw)
 
 
-async_session = async_sessionmaker(engine, expire_on_commit=False, class_=LogicDelAsyncSession)
+async_session_of_db0 = async_sessionmaker(engine, expire_on_commit=False, class_=LogicDelAsyncSession)
