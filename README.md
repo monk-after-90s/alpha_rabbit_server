@@ -1,7 +1,9 @@
 # alpha_rabbit_server
 
 阿尔法兔API服务
-prediction_engine预测引擎，分为基础版和增强版。
+
+## prediction_engine预测引擎，分为基础版和增强版。
+
 1、 基础版Basic_Prediction(data,length=5)接受传入两个参数，第一个参数是所有历史行情数据，第二个参数是预测未来走势的长度。
 
 1.1 先通过find_top_similar_patterns(self, top_n=5, corr_threshold=0.8)方法筛选出最匹配的top_n个形态，具体过程如下:
@@ -15,7 +17,8 @@ prediction_engine预测引擎，分为基础版和增强版。
 如果形态类别相等则保留开始时间最近的一半形态。
 
 2.2
-fetch_pattern_data(self, patternId)该方法可对所有形态进行历史行情回溯直接返回输入形态对未来8个bar预测的K线叠加走势（dataframe)
+fetch_pattern_data(self, patternId)
+该方法可对所有形态进行历史行情回溯直接返回输入形态对未来8个bar预测的K线叠加走势（dataframe)
 
 2.3通过方法prediction_method(self)去找步骤1中保留下来的形态对应步骤2中对未来预测的走势，得到多个预测走势后进行叠加。返回值为叠加后的走势以及
 入选形态匹配度的平均值。
