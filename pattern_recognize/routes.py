@@ -1,5 +1,5 @@
 import datetime
-
+import pytz
 from fastapi import APIRouter, Path, Request
 from utilities import MarketType
 from orm import KPatternGroup, PatternRecognizeRecord
@@ -7,6 +7,7 @@ from sqlalchemy import select
 from orm import async_session
 from sqlalchemy.orm import selectinload
 from dateutil.parser import parse
+from utilities import convert_to_sh
 
 router = APIRouter()
 
@@ -65,9 +66,9 @@ async def recognize_pattern(*,
         if 'kInterval' in recognize_param:
             stmt = stmt.where(PatternRecognizeRecord.kInterval == str(recognize_param['kInterval']))
         if 'start' in recognize_param:
-            stmt = stmt.where(PatternRecognizeRecord.patternEnd >= parse(recognize_param['start']))
+            stmt = stmt.where(PatternRecognizeRecord.patternEnd >= convert_to_sh(parse(recognize_param['start'])))
         if 'end' in recognize_param:
-            stmt = stmt.where(PatternRecognizeRecord.patternEnd <= parse(recognize_param['end']))
+            stmt = stmt.where(PatternRecognizeRecord.patternEnd <= convert_to_sh(parse(recognize_param['end'])))
         ## patternIds
         if 'patternIds' in recognize_param:
             pattern_ids = recognize_param['patternIds']
@@ -82,8 +83,8 @@ async def recognize_pattern(*,
         pattern_recognize_records = result.scalars().all()
 
         # 统计
-        start = datetime.datetime(3000, 1, 1)
-        end = datetime.datetime(1970, 1, 1)
+        start = datetime.datetime(3000, 1, 1, tzinfo=pytz.UTC)
+        end = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
         for pattern_recognize_record in pattern_recognize_records:
             if pattern_recognize_record.patternEnd < start:
                 start = pattern_recognize_record.patternEnd
