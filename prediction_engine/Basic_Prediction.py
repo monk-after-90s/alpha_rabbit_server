@@ -50,40 +50,38 @@ class Basic_Prediction:
 
         return dataframe_normalized
 
-    def find_top_similar_patterns(self, top_n=20, corr_threshold=0.8):
+    def find_top_similar_patterns(self, top_n=5, corr_threshold=0.8):
         pattern = self.pattern
 
         patterns_series = self.create_pattern_series()
 
-
-        dtw_distances = {}
-
+        corr_coef_dict = {}
         for index, historical_pattern in patterns_series.iteritems():
-
-
-
-            distance, _ = fastdtw(self.normalize_series(pattern), self.normalize_series(historical_pattern),
-                                  dist=euclidean)
-            dtw_distances[index] = distance
-
-        top_similar_patterns = nsmallest(top_n, dtw_distances.items(), key=itemgetter(1))
-        top_indices_and_patterns = [(index, patterns_series.loc[index]) for index, _ in top_similar_patterns]
-        # 计算平均距离
-        top_indices_and_patterns_corr_checked = []
-        corr_coef_list = []
-        for index, similar_pattern in top_indices_and_patterns:
-
             # Compute correlations for each feature and average them
-            corr_close = np.corrcoef(pattern.iloc[:, 0].values.flatten(),similar_pattern[:, 0].flatten())[0, 1]
-            corr_volume = np.corrcoef(pattern.iloc[:, 1].values.flatten(),similar_pattern[:, 1].flatten())[0, 1]
-            corr_ma = np.corrcoef(pattern.iloc[:, 2].values.flatten(),similar_pattern[:, 2].flatten())[0, 1]
+            corr_close = np.corrcoef(pattern.iloc[:, 0].values.flatten(), historical_pattern[:, 0].flatten())[0, 1]
+            corr_volume = np.corrcoef(pattern.iloc[:, 1].values.flatten(), historical_pattern[:, 1].flatten())[0, 1]
+            corr_ma = np.corrcoef(pattern.iloc[:, 2].values.flatten(), historical_pattern[:, 2].flatten())[0, 1]
             avg_corr = np.mean([corr_close, corr_volume, corr_ma])
 
             if avg_corr >= corr_threshold:
-                top_indices_and_patterns_corr_checked.append(index)
-                corr_coef_list.append(avg_corr)
+                corr_coef_dict[index] = historical_pattern
 
-        return (top_indices_and_patterns_corr_checked,np.mean(corr_coef_list))
+        if len(corr_coef_dict) <= top_n:
+            avg_corr_coef = np.mean(list(corr_coef_dict.values()))
+            return list(corr_coef_dict.keys()), avg_corr_coef
+
+        else:
+            dtw_distances = {}
+            for index, similar_pattern in corr_coef_dict.items():
+                distance, _ = fastdtw(self.normalize_series(pattern), self.normalize_series(similar_pattern),
+                                      dist=euclidean)
+                dtw_distances[index] = distance
+
+            top_similar_patterns = nsmallest(top_n, dtw_distances.items(), key=itemgetter(1))
+            top_indices_and_patterns = [index for index, _ in top_similar_patterns]
+            corr_list = [corr_coef_dict[i] for i in top_indices_and_patterns]
+
+            return top_indices_and_patterns, np.mean(corr_list)
 
     def extract_next_bars(self):
 
