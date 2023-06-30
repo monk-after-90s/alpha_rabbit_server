@@ -37,7 +37,7 @@ class KPattern(CommonColumn):
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
     imageUrl = mapped_column(String(255, 'utf8mb4_bin'), comment='图片URL')
     # groups = relationship("KPatternGroup", secondary=t_k_pattern_and_group, backref="k_patterns")
-    groups: Mapped[List["KPatternGroup"]] = relationship(secondary=t_k_pattern_and_group, backref='k_patterns')
+    # groups: Mapped[List["KPatternGroup"]] = relationship(secondary=t_k_pattern_and_group, backref='k_patterns')
 
 
 class KPatternGroup(CommonColumn):
@@ -47,7 +47,7 @@ class KPatternGroup(CommonColumn):
     name = mapped_column(String(128, 'utf8mb4_bin'), nullable=False, comment='形态组名')
     description = mapped_column(String(512, 'utf8mb4_bin'), comment='描述')
     # k_patterns = relationship("KPattern", secondary=t_k_pattern_and_group, backref="groups")
-    # k_patterns: Mapped[List["KPattern"]] = relationship(secondary=t_k_pattern_and_group)
+    k_patterns: Mapped[List["KPattern"]] = relationship(secondary=t_k_pattern_and_group, backref='groups')
 
 
 class PatternRecognizeRecord(CommonColumn):
