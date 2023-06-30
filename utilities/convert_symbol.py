@@ -112,8 +112,9 @@ async def symbol_vnpy2united(exchange: str, vnpy_symbol: str, init=False):
 
 async def symbol_united2vnpy(exchange: str, symbol_type: str, united_symbol: str, init=False):
     """
-    通用symbol到vnpy symbol fixme 测试
+    通用symbol到vnpy symbol
 
+    :param symbol_type: spot or futures
     :return: vnpy symbol如btcusdt，表示币安现货的BTC/USDT
     """
     if init:
@@ -143,15 +144,18 @@ if __name__ == '__main__':
 
 
     async def test():
-        logger.info(await asyncio.gather(symbol_vnpy2united('BINANCE', 'btcusdt'),
-                                         symbol_vnpy2united('BINANCE', 'ltcusdt'),
-                                         symbol_vnpy2united('BINANCE', 'ethusdt'),
-                                         symbol_vnpy2united('BINANCE', 'bnbusdt'),
-                                         ))
-        logger.info(await symbol_united2vnpy('BINANCE', 'spot', "ETH/USDT"))
-        logger.info(await symbol_united2vnpy('BINANCE', 'futures', "LTC/USDT"))
+        # logger.info(await asyncio.gather(symbol_vnpy2united('BINANCE', 'btcusdt'),
+        #                                  symbol_vnpy2united('BINANCE', 'ltcusdt'),
+        #                                  symbol_vnpy2united('BINANCE', 'ethusdt'),
+        #                                  symbol_vnpy2united('BINANCE', 'bnbusdt'),
+        #                                  ))
 
-        logger.info(await symbol_united2vnpy('OKEX', 'futures', "LTC/USDT"))
+        logger.info(await asyncio.gather(
+            symbol_united2vnpy('BINANCE', 'spot', "ETH/USDT"),
+            symbol_united2vnpy('BINANCE', 'futures', "LTC/USDT"),
+            symbol_united2vnpy('BINANCE', 'spot', "ETH/BTC"),
+            symbol_united2vnpy('BINANCE', 'futures', "ETH/BTC"),
+        ))
 
 
     asyncio.run(test())
