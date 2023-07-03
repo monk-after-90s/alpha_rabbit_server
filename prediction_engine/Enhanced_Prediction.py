@@ -1,7 +1,7 @@
 '''
 使用方法如下：method=Enhanced_Prediction(symbol_type,symbol,interval,datetime)
 result=method.prediction_method()
-该方法返回两个值，第一个值为未来8天的平均走势，是一个dataframe,包含开、高、低、收4个序列，第二个值为匹配度
+该方法返回两个值，第一个值为一个列表，列表里面有一个或者最多三个未来8天的走势，每个走势由一个dataframe记录,包含开、高、低、收4个序列，第二个值为匹配度
 '''
 import os
 from sqlalchemy import create_engine, text
@@ -160,15 +160,20 @@ class Enhanced_Prediction:
             # 对每个唯一的patternId调用fetch_pattern_data方法
             dataframes = [self.fetch_pattern_data(id) for id in unique_pattern_ids]
 
-            # 对所有dataframe进行平均
-            average_dataframe = pd.concat(dataframes).groupby(level=0).mean()
-        # 获取第一个数据集
+            # 如果1的数量等于0的数量，对所有dataframe进行平均
+            if count_1 == count_0:
+                dataframes = [pd.concat(dataframes).groupby(level=0).mean()]
+
+            # 获取第一个数据集
         data1 = self.get_data1()
 
         # 获取self.datetime对应的close_price
         close_price = data1[data1['datetime'] == self.datetime]['close_price'].iloc[0]
 
-        # 对average_dataframe的值进行还原
-        average_dataframe = average_dataframe * close_price
+        # 对每个dataframe的值进行还原
+        dataframes = [df * close_price for df in dataframes]
 
-        return average_dataframe, corre
+        # 只返回前三个dataframes
+        return dataframes[:3],corre
+
+
