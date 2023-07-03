@@ -7,7 +7,11 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
-class CommonColumn(AsyncAttrs, DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
+    pass
+
+
+class CommonColumn(Base):
     __abstract__ = True
 
     id = mapped_column(INTEGER, primary_key=True)
@@ -71,7 +75,7 @@ class PatternRecognizeRecord(CommonColumn):
     extra = mapped_column(JSON, comment='匹配形态结果的其他返回值')
 
 
-class Dbbardata(AsyncAttrs, DeclarativeBase):
+class Dbbardata(Base):
     __tablename__ = 'dbbardata'
     __table_args__ = (
         Index('dbbardata_symbol_exchange_interval_datetime', 'symbol', 'exchange', 'interval', 'datetime', unique=True),
