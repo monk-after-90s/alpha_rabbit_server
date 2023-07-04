@@ -48,7 +48,7 @@ class Enhanced_Prediction:
         engine = create_engine(f'mysql+pymysql://{self.user}:{self.password}@{self.host2}/{self.database2}')
 
         query = text(
-            f"SELECT * FROM pattern_recognize_record WHERE symbol_type=:symbol_type AND symbol=:symbol AND `interval`=:interval")
+            f"SELECT * FROM pattern_recognize_record WHERE symbol_type=:symbol_type AND symbol=:symbol AND kInterval=:interval")
         with engine.begin() as connection:
             df = pd.read_sql_query(query, connection,
                                    params={'symbol_type': symbol_type, 'symbol': symbol, 'interval': interval})
