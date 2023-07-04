@@ -1,6 +1,6 @@
 from typing import List
-from utilities import TimestampWithTimezone
-from sqlalchemy import Column, Float, Index, JSON, String, Table, text, ForeignKey, Integer, DateTime
+from utilities import TimestampWithTimezone, DatetimeWithTimezone
+from sqlalchemy import Column, Float, Index, JSON, String, Table, text, ForeignKey, Integer
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT, VARCHAR
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import DeclarativeBase
@@ -84,7 +84,7 @@ class Dbbardata(Base):
     id = mapped_column(Integer, primary_key=True)
     symbol = mapped_column(String(255, 'utf8mb4_bin'), nullable=False)
     exchange = mapped_column(String(255, 'utf8mb4_bin'), nullable=False)
-    datetime = mapped_column(DateTime, nullable=False)
+    datetime = mapped_column(DatetimeWithTimezone, nullable=False)
     interval = mapped_column(String(255, 'utf8mb4_bin'), nullable=False)
     volume = mapped_column(Float, nullable=False)
     turnover = mapped_column(Float, nullable=False)
