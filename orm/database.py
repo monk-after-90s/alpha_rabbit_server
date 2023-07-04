@@ -33,7 +33,7 @@ engine0: AsyncEngine = create_async_engine(
                os.getenv("DB_HOST"),
                os.getenv("DB_PORT"),
                os.getenv("DB0"),
-               query={"charset": "utf8mb4", "init_command": "SET time_zone = '+08:00';"}),
+               query={"charset": "utf8mb4", "init_command": f"SET time_zone = '{os.getenv('TIME_ZONE')}';"}),
     echo=True)
 # 0号数据库的会话工厂
 async_session_of_db0 = async_sessionmaker(engine0, expire_on_commit=False, class_=SoftLogicDelAsyncSession)
@@ -45,7 +45,7 @@ engine1: AsyncEngine = create_async_engine(
                os.getenv("DB_HOST"),
                os.getenv("DB_PORT"),
                os.getenv("DB1"),
-               query={"charset": "utf8mb4", "init_command": "SET time_zone = '+08:00';"}),
+               query={"charset": "utf8mb4", "init_command": f"SET time_zone = '{os.getenv('TIME_ZONE')}';"}),
     echo=True)
 # 1号数据库的会话工厂
 async_session_of_db1 = async_sessionmaker(engine1, expire_on_commit=False, class_=SoftLogicDelAsyncSession)
