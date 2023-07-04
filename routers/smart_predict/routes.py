@@ -91,6 +91,7 @@ async def smart_pred(*,
             else:
                 data = list(map(lambda pred_bars_df: json.loads(pred_bars_df.to_json(orient='records')), pred_bars))
                 pass
+        # ToDo 数据库缓存
         return {
             "symbolType": symbol_type,
             "symbol": symbol,
