@@ -80,6 +80,7 @@ async def smart_pred(*,
                 ).prediction_method)
 
         data = []
+        match_score = 0
         if prediction is None:
             ...
         else:
