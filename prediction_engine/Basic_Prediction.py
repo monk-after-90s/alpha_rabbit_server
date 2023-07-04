@@ -20,11 +20,11 @@ class Basic_Prediction:
         self.ma_period = 10
         self.data=data.copy()
         # First, calculate moving average on self.data
-        self.data['moving_average'] = self.data['close'].rolling(window=self.ma_period).mean()
+        self.data['moving_average'] = self.data['close_price'].rolling(window=self.ma_period).mean()
         # Drop NaN values
         self.data = self.data.dropna()
         self.pattern = self.data.iloc[-length:].copy()
-        self.pattern=self.pattern[['close','turnover','moving_average']]
+        self.pattern=self.pattern[['close_price','turnover','moving_average']]
 
 
     def create_pattern_series(self):
@@ -33,7 +33,7 @@ class Basic_Prediction:
         pattern_length = len(self.pattern)
 
         for i in range(len(candles) - pattern_length + 1):
-            pattern = candles[['close', 'turnover', 'moving_average']].iloc[i: i + pattern_length]
+            pattern = candles[['close_price', 'turnover', 'moving_average']].iloc[i: i + pattern_length]
 
             intersection = pattern.index.intersection(self.pattern.index)
             if intersection.empty:
@@ -93,8 +93,8 @@ class Basic_Prediction:
             for index in index_list:
                 if index + 1 + next_bars <= len(candles):
                     result = candles.iloc[index + 1: index + 1 + next_bars]
-                    result = result[['high', 'low', 'close', 'open']]
-                    result = result / (result['open'].iloc[0])
+                    result = result[['high_price', 'low_price', 'close_price', 'open_price']]
+                    result = result / (result['open_price'].iloc[0])
 
                     next_pattern_list.append(result)
 
@@ -103,7 +103,7 @@ class Basic_Prediction:
 
                 # 将结果转换回DataFrame
                 sum_df = pd.DataFrame(total_array, columns=next_pattern_list[0].columns)
-                sum_df = sum_df * self.pattern['close'].iloc[-1]
+                sum_df = sum_df * self.pattern['close_price'].iloc[-1]
 
                 return sum_df,self.find_top_similar_patterns()[1]
             else:
