@@ -56,7 +56,7 @@ class Basic_Prediction:
         patterns_series = self.create_pattern_series()
 
         corr_coef_dict = {}
-        for index, historical_pattern in patterns_series.iteritems():
+        for index, historical_pattern in patterns_series.items():
             # Compute correlations for each feature and average them
             corr_close = np.corrcoef(pattern.iloc[:, 0].values.flatten(), historical_pattern[:, 0].flatten())[0, 1]
             corr_volume = np.corrcoef(pattern.iloc[:, 1].values.flatten(), historical_pattern[:, 1].flatten())[0, 1]
