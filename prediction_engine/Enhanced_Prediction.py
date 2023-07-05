@@ -59,6 +59,7 @@ class Enhanced_Prediction:
         # 获取两个数据集
         data1 = self.get_data1()
         data2 = self.get_data2()
+        data1['datetime']=pd.to_datetime(data1['datetime'])
         data2['patternStart'] = pd.to_datetime(data2['patternStart'])
         data2['patternEnd'] = pd.to_datetime(data2['patternEnd'])
 
@@ -77,6 +78,7 @@ class Enhanced_Prediction:
         # 获取两个数据集
         data1 = self.get_data1()
         data2 = self.get_data2()
+        data1['datetime'] = pd.to_datetime(data1['datetime'])
         data2['patternStart'] = pd.to_datetime(data2['patternStart'])
         data2['patternEnd'] = pd.to_datetime(data2['patternEnd'])
 
