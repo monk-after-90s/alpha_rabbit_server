@@ -16,6 +16,7 @@ greenlet==2.0.2
 importlib-metadata==6.6.0
 inflect==6.0.4
 kiwisolver==1.4.4
+loguru==0.7.0
 matplotlib==3.7.1
 multidict==6.0.4
 numpy==1.24.3

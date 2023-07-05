@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
-from smart_predict import router as smart_predict_router
-from pattern_recognize import router as pattern_recognize_router
-from orm import engine
+from routers.smart_predict import router as smart_predict_router, executor
+from routers.pattern_recognize import router as pattern_recognize_router
+from orm import engine0
 
 app = FastAPI()
 
@@ -10,7 +10,8 @@ app = FastAPI()
 @app.on_event("shutdown")
 async def shutdown_event():
     # 关闭数据库连接
-    await engine.dispose()
+    await engine0.dispose()
+    executor.shutdown()
 
 
 app.include_router(pattern_recognize_router)

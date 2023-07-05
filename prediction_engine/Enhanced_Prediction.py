@@ -3,18 +3,22 @@
 result=method.prediction_method()
 该方法返回两个值，第一个值为一个列表，列表里面有一个或者最多三个未来8天的走势，每个走势由一个dataframe记录,包含开、高、低、收4个序列，第二个值为匹配度
 '''
+import os
 from sqlalchemy import create_engine, text
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Enhanced_Prediction:
     def __init__(self, symbol_type, symbol, interval, datetime):
-        self.user = "szhb"
-        self.password = "Vlink168168"
-        self.host1 = "rm-wz93wz2ew5j3di360-l3.mysql.rds.aliyuncs.com"
-        self.host2 = "rm-wz93wz2ew5j3di360-l3.mysql.rds.aliyuncs.com"
-        self.database1 = "quant"
-        self.database2 = "alpha_rabit_dev"
+        self.user = os.getenv("DB_USER")
+        self.password = os.getenv("DB_PASSWD")
+        self.host1 = os.getenv("DB_HOST")
+        self.host2 = os.getenv("DB_HOST")
+        self.database1 = os.getenv("DB1")
+        self.database2 = os.getenv("DB0")
         self.symbol_type = symbol_type
         self.symbol = symbol
         self.interval = interval

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Path, Request
 from utilities import MarketType
 from orm import KPatternGroup, PatternRecognizeRecord
 from sqlalchemy import select
-from orm import async_session
+from orm import async_session_of_db0
 from sqlalchemy.orm import selectinload
 from dateutil.parser import parse
 from utilities import convert_to_sh
@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post("/{symbolType}/getAllPatternGroups")
 async def get_all_pattern_groups():
     """获取全部形态组"""
-    async with async_session() as session:
+    async with async_session_of_db0() as session:
         # 执行查询并获取全部数据
         result = await session.execute(select(KPatternGroup))
         return result.scalars().all()
@@ -24,7 +24,7 @@ async def get_all_pattern_groups():
 @router.post("/{symbolType}/getGrpPatterns")
 async def get_grp_patterns(request: Request):
     """获取指定形态组的形态"""
-    async with async_session() as session:
+    async with async_session_of_db0() as session:
         # 形态组id
         pattern_grp_id: int = (await request.json()).get('patternGrpId')
         # 形态组
@@ -44,7 +44,7 @@ async def recognize_pattern(*,
                             symbol_type: MarketType = Path(..., alias="symbolType"),
                             request: Request):
     """形态识别"""
-    async with async_session() as session:
+    async with async_session_of_db0() as session:
         # 市场类型
         stmt = select(PatternRecognizeRecord).where(
             PatternRecognizeRecord.symbol_type == str(symbol_type.value)).order_by(PatternRecognizeRecord.id)
