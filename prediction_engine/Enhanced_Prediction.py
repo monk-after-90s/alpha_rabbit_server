@@ -30,7 +30,12 @@ class Enhanced_Prediction:
         elif self.symbol_type == 'futures':
             symbol = self.symbol.replace("/", "").upper()
 
-        interval = self.interval
+        if self.interval=='1d':
+            interval='d'
+        elif self.interval=='1w':
+            interval= 'w'
+        else:
+            interval=self.interval
 
         engine = create_engine(f'mysql+pymysql://{self.user}:{self.password}@{self.host1}/{self.database1}')
 
