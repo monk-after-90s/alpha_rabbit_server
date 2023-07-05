@@ -1,7 +1,6 @@
 import asyncio
 import json
 import pandas as pd
-from loguru import logger
 from pandas import DataFrame
 from prediction_engine import Basic_Prediction, Enhanced_Prediction
 from fastapi import APIRouter, Path, Request
@@ -22,7 +21,7 @@ async def smart_pred(*,
                      request: Request):
     symbol_type = str(symbol_type.value)
     # 处理post参数
-    logger.debug(f"{await request.body()=}")
+    print(f"{await request.body()=}")
     params = await request.json()
 
     stmt = select(Dbbardata)
