@@ -22,8 +22,8 @@ async def smart_pred(*,
                      request: Request):
     symbol_type = str(symbol_type.value)
     # 处理post参数
+    logger.debug(f"{await request.body()=}")
     params = await request.json()
-    logger.debug(f"{params=}")
 
     stmt = select(Dbbardata)
     # 参数搜集
