@@ -72,6 +72,12 @@ async def smart_pred(*,
                 )
             ).scalar()
 
+            if newest_datetime is None:
+                return {
+                    "code": -1,
+                    "msg": "没有K线记录"
+                }
+
             prediction = await asyncio.get_running_loop().run_in_executor(
                 executor,
                 Enhanced_Prediction(
