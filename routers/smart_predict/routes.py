@@ -1,7 +1,7 @@
 import asyncio
 import json
 import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, Timestamp
 from prediction_engine import Basic_Prediction, Enhanced_Prediction
 from fastapi import APIRouter, Path, Request
 from utilities import MarketType, bn_to_vnpy_interval
@@ -83,7 +83,7 @@ async def smart_pred(*,
                     symbol_type,
                     symbol,
                     kInterval,
-                    newest_datetime.replace(tzinfo=None)
+                    Timestamp(newest_datetime.replace(tzinfo=None))
                 ).prediction_method)
 
         data = []
