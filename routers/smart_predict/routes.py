@@ -8,7 +8,8 @@ from utilities import MarketType, bn_to_vnpy_interval
 from concurrent.futures import ProcessPoolExecutor
 from orm import async_session_of_db1, Dbbardata
 from sqlalchemy import select
-from utilities import symbol_united2vnpy
+from utilities import symbol_united2vnpy, INTERVAL_SECS_MAP, convert_to_utc
+from datetime import timedelta
 
 router = APIRouter()
 
@@ -59,6 +60,9 @@ async def smart_pred(*,
             prediction = await asyncio.get_running_loop().run_in_executor(
                 executor,
                 Basic_Prediction(bar_df, length=kNum).extract_next_bars)
+
+            if result:
+                last_date_time = result[-1].datetime
         else:
             # 查询最后的柱子datetime
             newest_datetime = (
@@ -76,6 +80,8 @@ async def smart_pred(*,
                     "code": -1,
                     "msg": "没有K线记录"
                 }
+            else:
+                last_date_time = newest_datetime
 
             prediction = await asyncio.get_running_loop().run_in_executor(
                 executor,
@@ -99,6 +105,11 @@ async def smart_pred(*,
             else:
                 data = list(map(lambda pred_bars_df: json.loads(pred_bars_df.to_json(orient='records')), pred_bars))
                 pass
+        # 添加时间字段
+        for k_lines in data:
+            for k_line in k_lines:
+                last_date_time += timedelta(seconds=INTERVAL_SECS_MAP[vnpy_interval])
+                k_line['datetime'] = last_date_time
         # ToDo 数据库缓存
         return {
             "symbolType": symbol_type,
