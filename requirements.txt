@@ -53,6 +53,7 @@ typing_extensions==4.6.3
 tzdata==2023.3
 tzlocal==5.0.1
 urllib3==2.0.3
+uvicorn==0.22.0
 vnpy==3.6.0
 vnpy-binance-pro==2023.6.20.1
 vnpy-crypto==0.1.0
